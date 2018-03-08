@@ -16,7 +16,7 @@ func main() {
 	fmt.Println("Input path: ", *filePath)
 	f, err := os.Open(*filePath)
 	util.Check(err)
-	// read BITMAPFILEHEADER values and put them values to the structure.
+	/* Load time. */
 	bitmapFileHeader := head.BitmapFileHeader{
 		string(util.ReadNextBytes(f, 2)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
@@ -40,15 +40,22 @@ func main() {
 	rgbQuads := make([]head.RgbQuads, 0)
 	if bmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8
 		for i := 0; i < (1 << uint(bmpInfoHeader.BiBitCount)); i++ {
-			Rgbq := head.RgbQuads{
+			rgbQuads = append(rgbQuads, head.RgbQuads{
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
-			}
-			rgbQuads = append(rgbQuads, Rgbq)
+			})
 		}
 	}
+	dataSizePerLine := (int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiBitCount) + 31) / 8
+	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
+	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
+		imageData = append(imageData, head.ImageLine{
+			util.ReadNextBytes(f, dataSizePerLine),
+		})
+	}
+	/* Show time. */
 	/* BITMAPFILEHEADER */
 	fmt.Println("bfType:\t\t", bitmapFileHeader.BfType)
 	fmt.Println("bfSize:\t\t", bitmapFileHeader.BfSize)
@@ -74,6 +81,10 @@ func main() {
 		fmt.Println("RGBQUAD ", i, ":\t", rgbQuads[i].Format())
 	}
 	fmt.Println("")
+	/* IMAGEDATA */
+	sizeOfData := len(imageData)
+	fmt.Println("len of imageData is: ", sizeOfData)
+	fmt.Println("the first line of data is: ", imageData[sizeOfData-1])
 
 	f.Close()
 }

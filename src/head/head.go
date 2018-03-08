@@ -41,3 +41,13 @@ func (rgbQuads RgbQuads) Format() string {
 	return fmt.Sprintf("(%d, %d, %d, %d)", rgbQuads.RgbBlue,
 		rgbQuads.RgbGreen, rgbQuads.RgbRed, rgbQuads.RgbReserved)
 }
+
+// ImageLine one Line of Pixel, may have some padding at the end.
+type ImageLine struct {
+	ImageByteArr []byte
+}
+
+// Format the ImageLine
+func (imageLine ImageLine) Format(bitCount int16) interface{} {
+	return nil
+}
