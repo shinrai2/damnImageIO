@@ -17,14 +17,14 @@ func main() {
 	f, err := os.Open(*filePath)
 	util.Check(err)
 	// read BITMAPFILEHEADER values and put them values to the structure.
-	BitmapFileHeader := head.BITMAPFILEHEADER{
+	bitmapFileHeader := head.BitmapFileHeader{
 		string(util.ReadNextBytes(f, 2)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
 		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 	}
-	BmpInfoHeader := head.BMP_INFOHEADER{
+	bmpInfoHeader := head.BmpInfoHeader{
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
@@ -37,42 +37,41 @@ func main() {
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 	}
-	RgbQuads := make([]head.RGBQUAD, 0)
-	if BmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8
-		for i := 0; i < (1 << uint(BmpInfoHeader.BiBitCount)); i++ {
-			Rgbq := head.RGBQUAD{
+	rgbQuads := make([]head.RgbQuads, 0)
+	if bmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8
+		for i := 0; i < (1 << uint(bmpInfoHeader.BiBitCount)); i++ {
+			Rgbq := head.RgbQuads{
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
 				int8(util.ReadNextBytes(f, 1)[0]),
 			}
-			RgbQuads = append(RgbQuads, Rgbq)
+			rgbQuads = append(rgbQuads, Rgbq)
 		}
 	}
 	/* BITMAPFILEHEADER */
-	fmt.Println("bfType:\t\t", BitmapFileHeader.BfType)
-	fmt.Println("bfSize:\t\t", BitmapFileHeader.BfSize)
-	fmt.Println("bfReserved1:\t", BitmapFileHeader.BfReserved1)
-	fmt.Println("bfReserved2:\t", BitmapFileHeader.BfReserved2)
-	fmt.Println("bfOffBits:\t", BitmapFileHeader.BfOffBits)
+	fmt.Println("bfType:\t\t", bitmapFileHeader.BfType)
+	fmt.Println("bfSize:\t\t", bitmapFileHeader.BfSize)
+	fmt.Println("bfReserved1:\t", bitmapFileHeader.BfReserved1)
+	fmt.Println("bfReserved2:\t", bitmapFileHeader.BfReserved2)
+	fmt.Println("bfOffBits:\t", bitmapFileHeader.BfOffBits)
 	fmt.Println("")
 	/* BMP_INFOHEADER */
-	fmt.Println("biSize:\t\t", BmpInfoHeader.BiSize)
-	fmt.Println("biWidth:\t", BmpInfoHeader.BiWidth)
-	fmt.Println("biHeight:\t", BmpInfoHeader.BiHeight)
-	fmt.Println("biPlanes:\t", BmpInfoHeader.BiPlanes)
-	fmt.Println("biBitCount:\t", BmpInfoHeader.BiBitCount)
-	fmt.Println("biCompression:\t", BmpInfoHeader.BiCompression)
-	fmt.Println("biSizeImage:\t", BmpInfoHeader.BiSizeImage)
-	fmt.Println("biXPelsPerMeter:", BmpInfoHeader.BiXPelsPerMeter)
-	fmt.Println("biYPelsPerMeter:", BmpInfoHeader.BiYPelsPerMeter)
-	fmt.Println("biClrUsed:\t", BmpInfoHeader.BiClrUsed)
-	fmt.Println("biClrImportant:\t", BmpInfoHeader.BiClrImportant)
+	fmt.Println("biSize:\t\t", bmpInfoHeader.BiSize)
+	fmt.Println("biWidth:\t", bmpInfoHeader.BiWidth)
+	fmt.Println("biHeight:\t", bmpInfoHeader.BiHeight)
+	fmt.Println("biPlanes:\t", bmpInfoHeader.BiPlanes)
+	fmt.Println("biBitCount:\t", bmpInfoHeader.BiBitCount)
+	fmt.Println("biCompression:\t", bmpInfoHeader.BiCompression)
+	fmt.Println("biSizeImage:\t", bmpInfoHeader.BiSizeImage)
+	fmt.Println("biXPelsPerMeter:", bmpInfoHeader.BiXPelsPerMeter)
+	fmt.Println("biYPelsPerMeter:", bmpInfoHeader.BiYPelsPerMeter)
+	fmt.Println("biClrUsed:\t", bmpInfoHeader.BiClrUsed)
+	fmt.Println("biClrImportant:\t", bmpInfoHeader.BiClrImportant)
 	fmt.Println("")
 	/* RGBQUAD */
-	for i := 0; i < len(RgbQuads); i++ {
-		fmt.Println("RGBQUAD ", i, ":\t(", RgbQuads[i].RgbBlue, ",",
-			RgbQuads[i].RgbGreen, ",", RgbQuads[i].RgbRed, ",", RgbQuads[i].RgbReserved, ")")
+	for i := 0; i < len(rgbQuads); i++ {
+		fmt.Println("RGBQUAD ", i, ":\t", rgbQuads[i].Format())
 	}
 	fmt.Println("")
 
