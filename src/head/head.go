@@ -60,7 +60,7 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]int8, int64) {
 	for _, v := range imageLine.ImageByteArr {
 		switch biBitCount {
 		case 1:
-			for i := uint(7); i >= uint(0); i-- {
+			for i := 7; i >= 0; i-- {
 				// layer = append(layer, ((int8(v) & (1 << i)) >> i))
 				_ = v
 				count++
