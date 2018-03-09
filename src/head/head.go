@@ -1,6 +1,7 @@
 package head
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -19,7 +20,7 @@ type BmpInfoHeader struct {
 	BiWidth         int32 // LONG, has signed bit.
 	BiHeight        int32 // LONG
 	BiPlanes        int16
-	BiBitCount      int16
+	BiBitCount      int16 // ignore 16 and 32
 	BiCompression   int32
 	BiSizeImage     int32
 	BiXPelsPerMeter int32 // LONG
@@ -48,6 +49,28 @@ type ImageLine struct {
 }
 
 // Format the ImageLine
-func (imageLine ImageLine) Format(bitCount int16) interface{} {
-	return nil
+func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]int8, int64) {
+	var layer []int8
+	var count int64
+	if biBitCount > 8 { // Non-grayscale
+		layer = make([]int8, 0, biWidth*3)
+	} else { // Grayscale
+		layer = make([]int8, 0, biWidth)
+	}
+	for _, v := range imageLine.ImageByteArr {
+		switch biBitCount {
+		case 1:
+			for i := uint(7); i >= uint(0); i-- {
+				// layer = append(layer, ((int8(v) & (1 << i)) >> i))
+				_ = v
+				count++
+			}
+		// case 4:
+		// case 8:
+		// case 24:
+		default:
+			panic(errors.New("Unsupported biBitCount type"))
+		}
+	}
+	return layer, count
 }

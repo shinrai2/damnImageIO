@@ -50,6 +50,7 @@ func main() {
 	}
 	dataSizePerLine := (int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiBitCount) + 31) / 8
 	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
+	fmt.Println("int(bmpInfoHeader.BiHeight)", int(bmpInfoHeader.BiHeight))
 	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
 		imageData = append(imageData, head.ImageLine{
 			util.ReadNextBytes(f, dataSizePerLine),
@@ -84,7 +85,8 @@ func main() {
 	/* IMAGEDATA */
 	sizeOfData := len(imageData)
 	fmt.Println("len of imageData is: ", sizeOfData)
-	fmt.Println("the first line of data is: ", imageData[sizeOfData-1])
-
+	_, count := imageData[sizeOfData-1].Format(
+		int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))
+	fmt.Println("the first line of data is: ", count)
 	f.Close()
 }
