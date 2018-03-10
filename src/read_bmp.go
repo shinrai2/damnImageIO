@@ -11,6 +11,8 @@ import (
 
 // main func.
 func main() {
+	// x := byte(128) >> 1
+	// fmt.Println(x)
 	filePath := flag.String("path", "source/t_1.bmp", "the path of file.")
 	flag.Parse()
 	fmt.Println("Input path: ", *filePath)
@@ -85,8 +87,9 @@ func main() {
 	/* IMAGEDATA */
 	sizeOfData := len(imageData)
 	fmt.Println("len of imageData is: ", sizeOfData)
-	_, count := imageData[sizeOfData-1].Format(
+	oneLine := imageData[sizeOfData-1].Format(
 		int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))
-	fmt.Println("the first line of data is: ", count)
+	fmt.Println("the first line of data is: ", oneLine)
+	fmt.Println("the len of first line of data is: ", len(oneLine))
 	f.Close()
 }

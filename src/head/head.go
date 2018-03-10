@@ -49,21 +49,22 @@ type ImageLine struct {
 }
 
 // Format the ImageLine
-func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]int8, int64) {
-	var layer []int8
-	var count int64
+func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
+	var layer []byte
+	var count int
 	if biBitCount > 8 { // Non-grayscale
-		layer = make([]int8, 0, biWidth*3)
+		layer = make([]byte, 0, biWidth*3)
 	} else { // Grayscale
-		layer = make([]int8, 0, biWidth)
+		layer = make([]byte, 0, biWidth)
 	}
 	for _, v := range imageLine.ImageByteArr {
 		switch biBitCount {
 		case 1:
 			for i := 7; i >= 0; i-- {
-				// layer = append(layer, ((int8(v) & (1 << i)) >> i))
-				_ = v
-				count++
+				if count < biWidth {
+					layer = append(layer, (v&(byte(1)<<uint(i)))>>uint(i))
+					count++
+				}
 			}
 		// case 4:
 		// case 8:
@@ -72,5 +73,5 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]int8, int64) {
 			panic(errors.New("Unsupported biBitCount type"))
 		}
 	}
-	return layer, count
+	return layer
 }
