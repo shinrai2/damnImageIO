@@ -11,8 +11,6 @@ import (
 
 // main func.
 func main() {
-	// x := byte(128) >> 1
-	// fmt.Println(x)
 	filePath := flag.String("path", "source/t_1.bmp", "the path of file.")
 	flag.Parse()
 	fmt.Println("Input path: ", *filePath)
@@ -52,7 +50,6 @@ func main() {
 	}
 	dataSizePerLine := (int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiBitCount) + 31) / 8
 	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
-	fmt.Println("int(bmpInfoHeader.BiHeight)", int(bmpInfoHeader.BiHeight))
 	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
 		imageData = append(imageData, head.ImageLine{
 			util.ReadNextBytes(f, dataSizePerLine),

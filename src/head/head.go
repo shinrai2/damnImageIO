@@ -66,7 +66,13 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
 					count++
 				}
 			}
-		// case 4:
+		case 4:
+			for i := 3; i >= 0; i-- {
+				if count < biWidth {
+					layer = append(layer, (v&(byte(3)<<uint(i*2)))>>uint(i*2))
+					count++
+				}
+			}
 		// case 8:
 		// case 24:
 		default:
