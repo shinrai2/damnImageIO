@@ -41,10 +41,10 @@ func main() {
 	if bmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8
 		for i := 0; i < (1 << uint(bmpInfoHeader.BiBitCount)); i++ {
 			rgbQuads = append(rgbQuads, head.RgbQuads{
-				int8(util.ReadNextBytes(f, 1)[0]),
-				int8(util.ReadNextBytes(f, 1)[0]),
-				int8(util.ReadNextBytes(f, 1)[0]),
-				int8(util.ReadNextBytes(f, 1)[0]),
+				util.ReadNextBytes(f, 1)[0],
+				util.ReadNextBytes(f, 1)[0],
+				util.ReadNextBytes(f, 1)[0],
+				util.ReadNextBytes(f, 1)[0],
 			})
 		}
 	}

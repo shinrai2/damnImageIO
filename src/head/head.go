@@ -31,16 +31,16 @@ type BmpInfoHeader struct {
 
 // RgbQuads record the RGB information.
 type RgbQuads struct {
-	RgbBlue     int8
-	RgbGreen    int8
-	RgbRed      int8
-	RgbReserved int8
+	RgbBlue     byte
+	RgbGreen    byte
+	RgbRed      byte
+	RgbReserved byte
 }
 
 // Format the RgbQuads like (0, 0, 0, 0)
 func (rgbQuads RgbQuads) Format() string {
-	return fmt.Sprintf("(%d, %d, %d, %d)", rgbQuads.RgbBlue,
-		rgbQuads.RgbGreen, rgbQuads.RgbRed, rgbQuads.RgbReserved)
+	return fmt.Sprint("(", rgbQuads.RgbBlue, ", ", rgbQuads.RgbGreen,
+		", ", rgbQuads.RgbRed, ", ", rgbQuads.RgbReserved, ")")
 }
 
 // ImageLine one Line of Pixel, may have some padding at the end.
@@ -73,8 +73,14 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
 					count++
 				}
 			}
-		// case 8:
+		case 8:
+			if count < biWidth {
+				layer = append(layer, v)
+				count++
+			}
+		// case 16:
 		// case 24:
+		// case 32:
 		default:
 			panic(errors.New("Unsupported biBitCount type"))
 		}
