@@ -49,6 +49,7 @@ func main() {
 		}
 	}
 	dataSizePerLine := (int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiBitCount) + 31) / 8
+	dataSizePerLine = (dataSizePerLine / 4) * 4 // Make sure the variable is a multiple of four.
 	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
 	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
 		imageData = append(imageData, head.ImageLine{
