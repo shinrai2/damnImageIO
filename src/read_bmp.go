@@ -85,8 +85,11 @@ func main() {
 	/* IMAGEDATA */
 	sizeOfData := len(imageData)
 	fmt.Println("len of imageData is: ", sizeOfData)
-	oneLine := imageData[sizeOfData-1].Format(
+	oneLine, err := imageData[sizeOfData-1].Format(
 		int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("the first line of data is: ", oneLine)
 	fmt.Println("the len of first line of data is: ", len(oneLine))
 	f.Close()

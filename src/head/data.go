@@ -49,8 +49,9 @@ type ImageLine struct {
 }
 
 // Format the ImageLine
-func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
+func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]byte, error) {
 	var layer []byte
+	var err error
 	var count int
 	if biBitCount > 8 { // Non-grayscale
 		layer = make([]byte, 0, biWidth*3)
@@ -82,8 +83,8 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
 		// case 24:
 		// case 32:
 		default:
-			panic(errors.New("Unsupported biBitCount type"))
+			err = errors.New("Unsupported biBitCount type")
 		}
 	}
-	return layer
+	return layer, err
 }
