@@ -36,3 +36,21 @@ func ReadNextBytes(f1 *os.File, size int) []byte {
 	Check(err)
 	return bx
 }
+
+// CompareIntArr Compare two arrays.
+func CompareIntArr(a1 []int, a2 []int) (bool, string) {
+	r := true    // default is true.
+	var d string // default is nil.
+	if len(a1) != len(a2) {
+		r = false
+		d = "The number of dimensions of the matrix is not the same"
+	}
+	for i := 0; i < len(a1); i++ {
+		if a1[i] != a2[i] {
+			r = false
+			d = "The length of some dimensions in the matrix is not the same"
+			break
+		}
+	}
+	return r, d
+}

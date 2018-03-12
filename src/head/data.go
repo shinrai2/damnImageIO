@@ -48,7 +48,7 @@ type ImageLine struct {
 	ImageByteArr []byte
 }
 
-// Format the ImageLine
+// Format the ImageLine to a one dimension byte matrix.
 func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]byte, error) {
 	var layer []byte
 	var err error
