@@ -12,6 +12,20 @@ type Matrix struct {
 	data      []int
 }
 
+// Create a new matrix after the rules check.
+func Create(dimension []int, data []int) Matrix {
+	l, err := util.MultiplyByEach(dimension)
+	util.Check(err)
+	if l != len(data) {
+		panic(errors.New("The data and dimensions of the matrix do not match"))
+	}
+	return Matrix{
+		dimension,
+		data,
+	}
+}
+
+// Add add the corresponding elements of two matrices.
 func (matrixA Matrix) Add(matrixB Matrix) (Matrix, error) {
 	var c Matrix
 	var err error

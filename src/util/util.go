@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"os"
 )
 
@@ -53,4 +54,18 @@ func CompareIntArr(a1 []int, a2 []int) (bool, string) {
 		}
 	}
 	return r, d
+}
+
+// MultiplyByEach check for all element and multiply them to be the return value.
+func MultiplyByEach(arr []int) (int, error) {
+	r := 1
+	var err error
+	for i := 0; i < len(arr); i++ {
+		if arr[i] == 0 {
+			err = errors.New("Zero exist")
+			break
+		}
+		r = arr[i] * r
+	}
+	return r, err
 }
