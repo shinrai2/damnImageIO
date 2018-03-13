@@ -25,6 +25,15 @@ func Create(dimension []int, data []int) Matrix {
 	}
 }
 
+// Sum each element of matrix and return the result.
+func (matrix Matrix) Sum() int {
+	var r int
+	for i := 0; i < len(matrix.data); i++ {
+		r = r + matrix.data[i]
+	}
+	return r
+}
+
 // Add add the corresponding elements of two matrices.
 func (matrixA Matrix) Add(matrixB Matrix) (Matrix, error) {
 	var c Matrix
