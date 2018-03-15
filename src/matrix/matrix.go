@@ -25,15 +25,6 @@ func Create(dimension []int, data []int) Matrix {
 	}
 }
 
-// Sum each element of matrix and return the result.
-func (matrix Matrix) Sum() int {
-	var r int
-	for i := 0; i < len(matrix.data); i++ {
-		r = r + matrix.data[i]
-	}
-	return r
-}
-
 // checkA is a function that check if the two matrices have the same shape.
 func checkA(matrix Matrix, matrixB Matrix) (int, int, error) {
 	var err error
@@ -50,13 +41,36 @@ func checkA(matrix Matrix, matrixB Matrix) (int, int, error) {
 	return lena, lend, err
 }
 
-// Add add the corresponding elements of two matrices.
+// Sum each element of matrix and return the result.
+func (matrix Matrix) Sum() int {
+	var r int
+	for i := 0; i < len(matrix.data); i++ {
+		r = r + matrix.data[i]
+	}
+	return r
+}
+
+// Equal or not between two matrices.
+func Equal(matrixA Matrix, matrixB Matrix) bool {
+	b := true
+	_, lend, err := checkA(matrixA, matrixB)
+	util.Check(err)
+	for i := 0; i < lend; i++ {
+		if matrixA.data[i] != matrixB.data[i] {
+			b = false
+			break
+		}
+	}
+	return b
+}
+
+// Add the corresponding elements of two matrices.
 func (matrix Matrix) Add(matrixB Matrix) Matrix {
 	var c Matrix
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, lend)
+	data := make([]int, 0, lend) // don't forget this zero, otherwise it will lead to data length error.
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]+matrixB.data[i])
@@ -68,12 +82,13 @@ func (matrix Matrix) Add(matrixB Matrix) Matrix {
 	return c
 }
 
+// Subtract the corresponding elements of two matrices.
 func (matrix Matrix) Subtract(matrixB Matrix) Matrix {
 	var c Matrix
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, lend)
+	data := make([]int, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]-matrixB.data[i])
@@ -85,12 +100,13 @@ func (matrix Matrix) Subtract(matrixB Matrix) Matrix {
 	return c
 }
 
+// Multiply the corresponding elements of two matrices.
 func (matrix Matrix) Multiply(matrixB Matrix) Matrix {
 	var c Matrix
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, lend)
+	data := make([]int, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]*matrixB.data[i])
@@ -102,12 +118,13 @@ func (matrix Matrix) Multiply(matrixB Matrix) Matrix {
 	return c
 }
 
+// Divide the corresponding elements of two matrices.
 func (matrix Matrix) Divide(matrixB Matrix) Matrix {
 	var c Matrix
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, lend)
+	data := make([]int, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]/matrixB.data[i])
