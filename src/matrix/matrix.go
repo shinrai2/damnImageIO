@@ -34,45 +34,87 @@ func (matrix Matrix) Sum() int {
 	return r
 }
 
-// Add add the corresponding elements of two matrices.
-func (matrixA Matrix) Add(matrixB Matrix) (Matrix, error) {
-	var c Matrix
+// checkA is a function that check if the two matrices have the same shape.
+func checkA(matrix Matrix, matrixB Matrix) (int, int, error) {
 	var err error
-	lena := len(matrixA.dimension)
-	lend := len(matrixA.data)
+	lena := len(matrix.dimension)
+	lend := len(matrix.data)
 	if lena == 0 || len(matrixB.dimension) == 0 {
 		err = errors.New("Empty matrix(s) exist")
 	} else {
-		r, d := util.CompareIntArr(matrixA.dimension, matrixB.dimension)
+		r, d := util.CompareIntArr(matrix.dimension, matrixB.dimension)
 		if r == false {
 			err = errors.New(d)
-		} else {
-			dimen := make([]int, lena)
-			data := make([]int, lend)
-			copy(dimen, matrixA.dimension)
-			for i := 0; i < lend; i++ {
-				data = append(data, matrixA.data[i]+matrixB.data[i])
-			}
-			c = Matrix{
-				dimen,
-				data,
-			}
 		}
 	}
-	return c, err
+	return lena, lend, err
 }
 
-func (matrixA Matrix) Subtract(matrixB Matrix) (Matrix, error) {
+// Add add the corresponding elements of two matrices.
+func (matrix Matrix) Add(matrixB Matrix) Matrix {
 	var c Matrix
-	return c, nil
+	lena, lend, err := checkA(matrix, matrixB)
+	util.Check(err)
+	dimen := make([]int, lena)
+	data := make([]int, lend)
+	copy(dimen, matrix.dimension)
+	for i := 0; i < lend; i++ {
+		data = append(data, matrix.data[i]+matrixB.data[i])
+	}
+	c = Matrix{
+		dimen,
+		data,
+	}
+	return c
 }
 
-func (matrixA Matrix) Multiply(matrixB Matrix) (Matrix, error) {
+func (matrix Matrix) Subtract(matrixB Matrix) Matrix {
 	var c Matrix
-	return c, nil
+	lena, lend, err := checkA(matrix, matrixB)
+	util.Check(err)
+	dimen := make([]int, lena)
+	data := make([]int, lend)
+	copy(dimen, matrix.dimension)
+	for i := 0; i < lend; i++ {
+		data = append(data, matrix.data[i]-matrixB.data[i])
+	}
+	c = Matrix{
+		dimen,
+		data,
+	}
+	return c
 }
 
-func (matrixA Matrix) Divide(matrixB Matrix) (Matrix, error) {
+func (matrix Matrix) Multiply(matrixB Matrix) Matrix {
 	var c Matrix
-	return c, nil
+	lena, lend, err := checkA(matrix, matrixB)
+	util.Check(err)
+	dimen := make([]int, lena)
+	data := make([]int, lend)
+	copy(dimen, matrix.dimension)
+	for i := 0; i < lend; i++ {
+		data = append(data, matrix.data[i]*matrixB.data[i])
+	}
+	c = Matrix{
+		dimen,
+		data,
+	}
+	return c
+}
+
+func (matrix Matrix) Divide(matrixB Matrix) Matrix {
+	var c Matrix
+	lena, lend, err := checkA(matrix, matrixB)
+	util.Check(err)
+	dimen := make([]int, lena)
+	data := make([]int, lend)
+	copy(dimen, matrix.dimension)
+	for i := 0; i < lend; i++ {
+		data = append(data, matrix.data[i]/matrixB.data[i])
+	}
+	c = Matrix{
+		dimen,
+		data,
+	}
+	return c
 }
