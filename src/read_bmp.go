@@ -18,33 +18,33 @@ func main() {
 	util.Check(err)
 	/* Load time. */
 	bitmapFileHeader := head.BitmapFileHeader{
-		string(util.ReadNextBytes(f, 2)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
-		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BfType:      string(util.ReadNextBytes(f, 2)),
+		BfSize:      util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BfReserved1: util.ByteArr2int16(util.ReadNextBytes(f, 2)),
+		BfReserved2: util.ByteArr2int16(util.ReadNextBytes(f, 2)),
+		BfOffBits:   util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 	}
 	bmpInfoHeader := head.BmpInfoHeader{
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
-		util.ByteArr2int16(util.ReadNextBytes(f, 2)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
-		util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiSize:          util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiWidth:         util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiHeight:        util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiPlanes:        util.ByteArr2int16(util.ReadNextBytes(f, 2)),
+		BiBitCount:      util.ByteArr2int16(util.ReadNextBytes(f, 2)),
+		BiCompression:   util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiSizeImage:     util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiXPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiYPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiClrUsed:       util.ByteArr2int32(util.ReadNextBytes(f, 4)),
+		BiClrImportant:  util.ByteArr2int32(util.ReadNextBytes(f, 4)),
 	}
 	rgbQuads := make([]head.RgbQuads, 0)
 	if bmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8
 		for i := 0; i < (1 << uint(bmpInfoHeader.BiBitCount)); i++ {
 			rgbQuads = append(rgbQuads, head.RgbQuads{
-				util.ReadNextBytes(f, 1)[0],
-				util.ReadNextBytes(f, 1)[0],
-				util.ReadNextBytes(f, 1)[0],
-				util.ReadNextBytes(f, 1)[0],
+				RgbBlue:     util.ReadNextBytes(f, 1)[0],
+				RgbGreen:    util.ReadNextBytes(f, 1)[0],
+				RgbRed:      util.ReadNextBytes(f, 1)[0],
+				RgbReserved: util.ReadNextBytes(f, 1)[0],
 			})
 		}
 	}
@@ -53,7 +53,7 @@ func main() {
 	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
 	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
 		imageData = append(imageData, head.ImageLine{
-			util.ReadNextBytes(f, dataSizePerLine),
+			ImageByteArr: util.ReadNextBytes(f, dataSizePerLine),
 		})
 	}
 	/* Show time. */
@@ -91,6 +91,6 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("the first line of data is: ", oneLine)
-	fmt.Println("the len of first line of data is: ", len(oneLine))
+	fmt.Println("the len of first line of data is: ", len(oneLine), "(", len(imageData[sizeOfData-1].ImageByteArr), ")")
 	f.Close()
 }

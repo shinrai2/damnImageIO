@@ -37,7 +37,7 @@ func TestEqual1(t *testing.T) {
 	m2 := Matrix{[]int{2, 2},
 		[]int{5, 6, 7, 8}}
 	if Equal(m1, m2) == true {
-		t.Error("Wrong result of the Matrix Equal Func.")
+		t.Error("Wrong result of the Matrix Equal Func")
 	}
 }
 
@@ -47,7 +47,7 @@ func TestEqual2(t *testing.T) {
 	m2 := Matrix{[]int{2, 2},
 		[]int{1, 2, 3, 4}}
 	if Equal(m1, m2) == false {
-		t.Error("Wrong result of the Matrix Equal Func.")
+		t.Error("Wrong result of the Matrix Equal Func")
 	}
 }
 
@@ -58,7 +58,7 @@ func TestAdd(t *testing.T) {
 		[]int{5, 6, 7, 8}}
 	m3 := m1.Add(m2)
 	if Equal(m3, Matrix{[]int{2, 2}, []int{6, 8, 10, 12}}) == false {
-		t.Error("Wrong result of the Matrix Add Func.")
+		t.Error("Wrong result of the Matrix Add Func")
 	}
 }
 
@@ -69,7 +69,7 @@ func TestSubtract(t *testing.T) {
 		[]int{5, 6, 7, 8}}
 	m3 := m2.Subtract(m1)
 	if Equal(m3, Matrix{[]int{2, 2}, []int{4, 4, 4, 4}}) == false {
-		t.Error("Wrong result of the Matrix Subtract Func.")
+		t.Error("Wrong result of the Matrix Subtract Func")
 	}
 }
 
@@ -80,6 +80,17 @@ func TestMultiply(t *testing.T) {
 		[]int{5, 6, 7, 8}}
 	m3 := m2.Multiply(m1)
 	if Equal(m3, Matrix{[]int{2, 2}, []int{5, 12, 21, 32}}) == false {
-		t.Error("Wrong result of the Matrix Multiply Func.")
+		t.Error("Wrong result of the Matrix Multiply Func")
+	}
+}
+
+func TestDivide(t *testing.T) {
+	m1 := Matrix{[]int{2, 2},
+		[]int{1, 2, 3, 4}}
+	m2 := Matrix{[]int{2, 2},
+		[]int{5, 6, 7, 8}}
+	m3 := m2.Divide(m1)
+	if Equal(m3, Matrix{[]int{2, 2}, []int{5, 3, 2, 2}}) == false {
+		t.Error("Wrong result of the Matrix Divide Func")
 	}
 }
