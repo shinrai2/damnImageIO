@@ -1,18 +1,15 @@
-package main
+package bmp
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
-	head "./head"
-	util "./util"
+	head "../head"
+	util "../util"
 )
 
-// main func.
-func main() {
-	filePath := flag.String("path", "source/t_1.bmp", "the path of file.")
-	flag.Parse()
+// Read bmp data.
+func Read(filePath *string) {
 	fmt.Println("Input path: ", *filePath)
 	f, err := os.Open(*filePath)
 	util.Check(err)
