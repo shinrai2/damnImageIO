@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bufio"
 	"errors"
 	"os"
 )
@@ -31,9 +32,9 @@ func ByteArr2int16(byteArr []byte) int16 {
 }
 
 // ReadNextBytes read the next x bytes in 'os.File'.
-func ReadNextBytes(f1 *os.File, size int) []byte {
+func ReadNextBytes(br *bufio.Reader, size int) []byte {
 	bx := make([]byte, size)
-	_, err := f1.Read(bx)
+	_, err := br.Read(bx)
 	Check(err)
 	return bx
 }
@@ -68,4 +69,12 @@ func MultiplyByEach(arr []int) (int, error) {
 		r = arr[i] * r
 	}
 	return r, err
+}
+
+func CheckFileIsExist(filename string) bool {
+	var exist = true
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		exist = false
+	}
+	return exist
 }
