@@ -3,6 +3,8 @@ package head
 import (
 	"errors"
 	"fmt"
+
+	util "../util"
 )
 
 // BitmapFileHeader record the file information.
@@ -49,9 +51,8 @@ type ImageLine struct {
 }
 
 // Format the ImageLine to a one dimension byte matrix.
-func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]byte, error) {
+func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
 	var layer []byte
-	var err error
 	var count int
 	if biBitCount > 8 { // Non-grayscale
 		layer = make([]byte, 0, biWidth*3)
@@ -83,8 +84,8 @@ func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]byte, error) {
 		// case 24:
 		// case 32:
 		default:
-			err = errors.New("Unsupported biBitCount type")
+			util.Check(errors.New("Unsupported biBitCount type"))
 		}
 	}
-	return layer, err
+	return layer
 }
