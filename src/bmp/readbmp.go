@@ -5,6 +5,7 @@ import (
 	"os"
 
 	head "../head"
+	matrix "../matrix"
 	util "../util"
 )
 
@@ -53,6 +54,21 @@ func Read(filePath *string) {
 			ImageByteArr: readNextBytes(f, dataSizePerLine),
 		})
 	}
+	mdata := make([]uint8, 0, int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiHeight))
+	for i := int(bmpInfoHeader.BiHeight) - 1; i >= 0; i-- {
+		mdata = append(mdata, imageData[i].Format2intArr(int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))...)
+	}
+	imageData = nil
+	mdimen := []int{int(bmpInfoHeader.BiWidth), int(bmpInfoHeader.BiHeight)}
+	imgMatrix := matrix.Create(mdimen, mdata)
+	/* In the end we get the structure what we want */
+	bmpData := head.BmpData{
+		BitmapFileHeader: bitmapFileHeader,
+		BmpInfoHeader:    bmpInfoHeader,
+		RgbQuads:         rgbQuads,
+		ImgMatrix:        imgMatrix,
+	}
+	_ = bmpData
 	/* Show time. */
 	/* BITMAPFILEHEADER */
 	fmt.Println("bfType:\t\t", bitmapFileHeader.BfType)
@@ -80,15 +96,7 @@ func Read(filePath *string) {
 	}
 	fmt.Println("")
 	/* IMAGEDATA */
-	sizeOfData := len(imageData)
-	fmt.Println("len of imageData is: ", sizeOfData)
-	oneLine, err := imageData[31].Format(
-		int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("the first line of data is: ", oneLine)
-	fmt.Println("the len of first line of data is: ", len(oneLine), "(", len(imageData[sizeOfData-1].ImageByteArr), ")")
+	imgMatrix.Printx()
 	f.Close() // avoid OOM
 }
 

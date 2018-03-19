@@ -3,6 +3,8 @@ package head
 import (
 	"errors"
 	"fmt"
+
+	util "../util"
 )
 
 // BitmapFileHeader record the file information.
@@ -48,43 +50,42 @@ type ImageLine struct {
 	ImageByteArr []byte
 }
 
-// Format the ImageLine to a one dimension byte matrix.
-func (imageLine ImageLine) Format(biBitCount int, biWidth int) ([]byte, error) {
-	var layer []byte
-	var err error
+// Format2intArr format the ImageLine to a one dimension int matrix.
+func (imageLine ImageLine) Format2intArr(biBitCount int, biWidth int) []uint8 {
+	var layer []uint8
 	var count int
 	if biBitCount > 8 { // Non-grayscale
-		layer = make([]byte, 0, biWidth*3)
+		layer = make([]uint8, 0, biWidth*3)
 	} else { // Grayscale
-		layer = make([]byte, 0, biWidth)
+		layer = make([]uint8, 0, biWidth)
 	}
 	for _, v := range imageLine.ImageByteArr {
 		switch biBitCount {
 		case 1:
 			for i := 7; i >= 0; i-- {
 				if count < biWidth {
-					layer = append(layer, (v&(byte(1)<<uint(i)))>>uint(i))
+					layer = append(layer, uint8((v&(byte(1)<<uint(i)))>>uint(i)))
 					count++
 				}
 			}
 		case 4:
 			for i := 1; i >= 0; i-- {
 				if count < biWidth {
-					layer = append(layer, (v&(byte(15)<<uint(i*4)))>>uint(i*4))
+					layer = append(layer, uint8((v&(byte(15)<<uint(i*4)))>>uint(i*4)))
 					count++
 				}
 			}
 		case 8:
 			if count < biWidth {
-				layer = append(layer, v)
+				layer = append(layer, uint8(v))
 				count++
 			}
 		// case 16:
 		// case 24:
 		// case 32:
 		default:
-			err = errors.New("Unsupported biBitCount type")
+			util.Check(errors.New("Unsupported biBitCount type"))
 		}
 	}
-	return layer, err
+	return layer
 }

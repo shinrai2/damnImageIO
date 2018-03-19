@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"errors"
+	"fmt"
 
 	util "../util"
 )
@@ -9,19 +10,19 @@ import (
 // Matrix structure to be determined...
 type Matrix struct {
 	dimension []int
-	data      []int
+	data      []uint8
 }
 
 // Create a new matrix after the rules check.
-func Create(dimension []int, data []int) Matrix {
+func Create(dimension []int, data []uint8) Matrix {
 	l, err := util.MultiplyByEach(dimension)
 	util.Check(err)
 	if l != len(data) {
 		panic(errors.New("The data and dimensions of the matrix do not match"))
 	}
 	return Matrix{
-		dimension,
-		data,
+		dimension: dimension,
+		data:      data,
 	}
 }
 
@@ -41,9 +42,23 @@ func checkA(matrix Matrix, matrixB Matrix) (int, int, error) {
 	return lena, lend, err
 }
 
+// Printx ..
+func (matrix Matrix) Printx() {
+	if len(matrix.dimension) == 2 {
+		for i := 0; i < len(matrix.data); i++ {
+			if i%matrix.dimension[0] == 0 {
+				fmt.Println("") // next line.
+			}
+			fmt.Print(matrix.data[i], " ")
+		}
+	} else if len(matrix.dimension) == 3 {
+
+	}
+}
+
 // Sum each element of matrix and return the result.
-func (matrix Matrix) Sum() int {
-	var r int
+func (matrix Matrix) Sum() uint8 {
+	var r uint8
 	for i := 0; i < len(matrix.data); i++ {
 		r = r + matrix.data[i]
 	}
@@ -70,7 +85,7 @@ func (matrix Matrix) Add(matrixB Matrix) Matrix {
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, 0, lend) // don't forget this zero, otherwise it will lead to data length error.
+	data := make([]uint8, 0, lend) // don't forget this zero, otherwise it will lead to data length error.
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]+matrixB.data[i])
@@ -88,7 +103,7 @@ func (matrix Matrix) Subtract(matrixB Matrix) Matrix {
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, 0, lend)
+	data := make([]uint8, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]-matrixB.data[i])
@@ -106,7 +121,7 @@ func (matrix Matrix) Multiply(matrixB Matrix) Matrix {
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, 0, lend)
+	data := make([]uint8, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]*matrixB.data[i])
@@ -124,7 +139,7 @@ func (matrix Matrix) Divide(matrixB Matrix) Matrix {
 	lena, lend, err := checkA(matrix, matrixB)
 	util.Check(err)
 	dimen := make([]int, lena)
-	data := make([]int, 0, lend)
+	data := make([]uint8, 0, lend)
 	copy(dimen, matrix.dimension)
 	for i := 0; i < lend; i++ {
 		data = append(data, matrix.data[i]/matrixB.data[i])
