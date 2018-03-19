@@ -21,5 +21,6 @@ func Write(filename string, data head.BmpData) {
 	util.Check(err)
 	wb := bufio.NewWriter(f)
 	_ = wb
+
 	f.Close()
 }

@@ -29,6 +29,23 @@ func ByteArr2int16(byteArr []byte) int16 {
 	return int16(r)
 }
 
+// Int2ByteArr transform int to byte Array.
+func Int2ByteArr(intt interface{}) []byte {
+	var r []byte
+	if v1, ok1 := intt.(int32); ok1 {
+		r = make([]byte, 0, 4)
+		for i := 0; i < 4; i++ {
+			r = append(r, byte(uint(v1)>>uint(i*8)))
+		}
+	} else if v2, ok2 := intt.(int16); ok2 {
+		r = make([]byte, 0, 2)
+		for i := 0; i < 2; i++ {
+			r = append(r, byte(uint(v2)>>uint(i*8)))
+		}
+	}
+	return r
+}
+
 // CompareIntArr Compare two arrays.
 func CompareIntArr(a1 []int, a2 []int) (bool, string) {
 	r := true    // default is true.
