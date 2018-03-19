@@ -2,26 +2,24 @@ package bmp
 
 import (
 	"bufio"
-	"errors"
 	"os"
 
+	head "../head"
 	util "../util"
 )
 
-type BmpFileWriteBuffer struct {
-	buffer *bufio.Writer
+// writeNextBytes ..
+func writeNextBytes(wr *bufio.Writer, pdata []byte) {
+	_, err := wr.Write(pdata)
+	util.Check(err)
+	wr.Flush()
 }
 
-// CreateFile ..
-func CreateFile(filename string) BmpFileWriteBuffer {
-	var writeBuffer BmpFileWriteBuffer
-	if util.CheckFileIsExist(filename) == false {
-		f, err := os.Create(filename)
-		defer f.Close()
-		util.Check(err)
-		writeBuffer = BmpFileWriteBuffer{buffer: bufio.NewWriter(f)}
-	} else {
-		util.Check(errors.New("File already exists"))
-	}
-	return writeBuffer
+// Write ..
+func Write(filename string, data head.BmpData) {
+	f, err := os.Create(filename)
+	util.Check(err)
+	wb := bufio.NewWriter(f)
+	_ = wb
+	f.Close()
 }

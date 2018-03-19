@@ -1,9 +1,7 @@
 package util
 
 import (
-	"bufio"
 	"errors"
-	"os"
 )
 
 // Check panic if the func returns the error value is not nil.
@@ -29,14 +27,6 @@ func ByteArr2int16(byteArr []byte) int16 {
 		r += int16(v) << uint(i*8)
 	}
 	return int16(r)
-}
-
-// ReadNextBytes read the next x bytes in 'os.File'.
-func ReadNextBytes(br *bufio.Reader, size int) []byte {
-	bx := make([]byte, size)
-	_, err := br.Read(bx)
-	Check(err)
-	return bx
 }
 
 // CompareIntArr Compare two arrays.
@@ -69,12 +59,4 @@ func MultiplyByEach(arr []int) (int, error) {
 		r = arr[i] * r
 	}
 	return r, err
-}
-
-func CheckFileIsExist(filename string) bool {
-	var exist = true
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		exist = false
-	}
-	return exist
 }
