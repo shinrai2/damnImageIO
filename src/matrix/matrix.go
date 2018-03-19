@@ -52,7 +52,16 @@ func (matrix Matrix) Printx() {
 			fmt.Print(matrix.data[i], " ")
 		}
 	} else if len(matrix.dimension) == 3 {
-
+		for i := 0; i < len(matrix.data); i++ {
+			xy := matrix.dimension[0] * matrix.dimension[1]
+			if i%matrix.dimension[0] == 0 {
+				fmt.Println("") // next line.
+				if i%xy == 0 {
+					fmt.Printf("[::%d]\n", i/xy)
+				}
+			}
+			fmt.Print(matrix.data[i], " ")
+		}
 	}
 }
 
