@@ -1,11 +1,11 @@
 package head
 
 // PngFileSignature is the first eight bytes of a PNG file.
-type PngFileSignature [8]byte
+type PngFileSignature []byte
 
 type Chunk struct {
-	Length        uint32
-	ChunkTypeCode uint32
+	Length        uint32 // 4 byte
+	ChunkTypeCode uint32 // 4 byte
 	ChunkData     interface{}
 	CRC           [4]byte
 }
@@ -27,4 +27,4 @@ type PLTE struct {
 }
 
 // IEND is the last twelve bytes of a PNG file.
-type IEND [12]byte
+type IEND []byte
