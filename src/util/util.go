@@ -18,7 +18,7 @@ func ByteArr2int32(byteArr []byte) int32 {
 	for i, v := range byteArr {
 		r += int32(v) << uint(i*8)
 	}
-	return int32(r)
+	return r
 }
 
 // ByteArr2int16 transform byte Array to int16, ignore the sign bit(!).
@@ -27,7 +27,25 @@ func ByteArr2int16(byteArr []byte) int16 {
 	for i, v := range byteArr {
 		r += int16(v) << uint(i*8)
 	}
-	return int16(r)
+	return r
+}
+
+// ByteArr2int32u transform byte Array to !!uint32, ignore the sign bit(!).
+func ByteArr2int32u(byteArr []byte) uint32 {
+	var r uint32
+	for i, v := range byteArr {
+		r += uint32(v) << uint(i*8)
+	}
+	return r
+}
+
+// ByteArr2int16u transform byte Array to !!uint16, ignore the sign bit(!).
+func ByteArr2int16u(byteArr []byte) uint16 {
+	var r uint16
+	for i, v := range byteArr {
+		r += uint16(v) << uint(i*8)
+	}
+	return r
 }
 
 // ReadNextBytes read the next x bytes in 'os.File'.
@@ -50,6 +68,16 @@ func Int2ByteArr(intt interface{}) []byte {
 		r = make([]byte, 0, 2)
 		for i := 0; i < 2; i++ {
 			r = append(r, byte(uint(v2)>>uint(i*8)))
+		}
+	} else if v3, ok3 := intt.(uint32); ok3 {
+		r = make([]byte, 0, 4)
+		for i := 0; i < 4; i++ {
+			r = append(r, byte(v3>>uint(i*8)))
+		}
+	} else if v4, ok4 := intt.(uint16); ok4 {
+		r = make([]byte, 0, 2)
+		for i := 0; i < 2; i++ {
+			r = append(r, byte(v4>>uint(i*8)))
 		}
 	}
 	return r
@@ -87,8 +115,8 @@ func MultiplyByEach(arr []int) (int, error) {
 	return r, err
 }
 
-// GetLineLen ..
-func GetLineLen(biWidth int32, biBitCount int16) int {
+// GetLenthOfLine ..
+func GetLenthOfLine(biWidth int32, biBitCount uint16) int {
 	dataSizePerLine := (int(biWidth)*int(biBitCount) + 31) / 8
 	return (dataSizePerLine / 4) * 4 // Make sure the variable is a multiple of four.
 }
