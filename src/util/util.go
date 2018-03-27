@@ -77,3 +77,9 @@ func MultiplyByEach(arr []int) (int, error) {
 	}
 	return r, err
 }
+
+// GetLineLen ..
+func GetLineLen(biWidth int32, biBitCount int16) int {
+	dataSizePerLine := (int(biWidth)*int(biBitCount) + 31) / 8
+	return (dataSizePerLine / 4) * 4 // Make sure the variable is a multiple of four.
+}

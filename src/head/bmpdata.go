@@ -50,9 +50,9 @@ type ImageLine struct {
 	ImageByteArr []byte
 }
 
-// Format2intArr format the ImageLine to a one dimension int matrix.
-func (imageLine ImageLine) Format2intArr(biBitCount int, biWidth int) []uint8 {
-	var layer []uint8
+// Format the ImageLine to a one dimension byte matrix.
+func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
+	var layer []byte
 	var count int
 	if biBitCount > 8 { // Non-grayscale
 		layer = make([]uint8, 0, biWidth*3)
