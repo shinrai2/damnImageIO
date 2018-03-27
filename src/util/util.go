@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"os"
 )
 
 // Check panic if the func returns the error value is not nil.
@@ -27,6 +28,14 @@ func ByteArr2int16(byteArr []byte) int16 {
 		r += int16(v) << uint(i*8)
 	}
 	return int16(r)
+}
+
+// ReadNextBytes read the next x bytes in 'os.File'.
+func ReadNextBytes(f1 *os.File, size int) []byte {
+	bx := make([]byte, size)
+	_, err := f1.Read(bx)
+	Check(err)
+	return bx
 }
 
 // Int2ByteArr transform int to byte Array.
