@@ -11,3 +11,7 @@ type BmpData struct {
 	RgbQuads         []RgbQuads
 	ImgMatrix        matrix.Matrix
 }
+
+// PngData ..
+type PngData struct {
+}

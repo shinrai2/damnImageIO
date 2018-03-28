@@ -17,23 +17,23 @@ func Read(filePath *string) {
 	/* Load time. */
 	bitmapFileHeader := head.BitmapFileHeader{
 		BfType:      string(util.ReadNextBytes(f, 2)),
-		BfSize:      util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
-		BfReserved1: util.ByteArr2int16u(util.ReadNextBytes(f, 2)),
-		BfReserved2: util.ByteArr2int16u(util.ReadNextBytes(f, 2)),
-		BfOffBits:   util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
+		BfSize:      util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
+		BfReserved1: util.ByteArr2int16u(util.ReadNextBytes(f, 2), true),
+		BfReserved2: util.ByteArr2int16u(util.ReadNextBytes(f, 2), true),
+		BfOffBits:   util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
 	}
 	bmpInfoHeader := head.BmpInfoHeader{
-		BiSize:          util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
-		BiWidth:         util.ByteArr2int32(util.ReadNextBytes(f, 4)), // LONG
-		BiHeight:        util.ByteArr2int32(util.ReadNextBytes(f, 4)), // LONG
-		BiPlanes:        util.ByteArr2int16u(util.ReadNextBytes(f, 2)),
-		BiBitCount:      util.ByteArr2int16u(util.ReadNextBytes(f, 2)),
-		BiCompression:   util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
-		BiSizeImage:     util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
-		BiXPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4)), // LONG
-		BiYPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4)), // LONG
-		BiClrUsed:       util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
-		BiClrImportant:  util.ByteArr2int32u(util.ReadNextBytes(f, 4)),
+		BiSize:          util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
+		BiWidth:         util.ByteArr2int32(util.ReadNextBytes(f, 4), true), // LONG
+		BiHeight:        util.ByteArr2int32(util.ReadNextBytes(f, 4), true), // LONG
+		BiPlanes:        util.ByteArr2int16u(util.ReadNextBytes(f, 2), true),
+		BiBitCount:      util.ByteArr2int16u(util.ReadNextBytes(f, 2), true),
+		BiCompression:   util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
+		BiSizeImage:     util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
+		BiXPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4), true), // LONG
+		BiYPelsPerMeter: util.ByteArr2int32(util.ReadNextBytes(f, 4), true), // LONG
+		BiClrUsed:       util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
+		BiClrImportant:  util.ByteArr2int32u(util.ReadNextBytes(f, 4), true),
 	}
 	rgbQuads := make([]head.RgbQuads, 0)
 	if bmpInfoHeader.BiBitCount <= 8 { // Grayscale: <=8

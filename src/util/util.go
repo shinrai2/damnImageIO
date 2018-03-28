@@ -13,37 +13,57 @@ func Check(e error) {
 }
 
 // ByteArr2int32 transform byte Array to int32, ignore the sign bit(!).
-func ByteArr2int32(byteArr []byte) int32 {
+func ByteArr2int32(byteArr []byte, direction bool) int32 {
 	var r int32
 	for i, v := range byteArr {
-		r += int32(v) << uint(i*8)
+		if direction == true {
+			r += int32(v) << uint(i*8)
+		} else {
+			r = r << 8
+			r += int32(v)
+		}
 	}
 	return r
 }
 
 // ByteArr2int16 transform byte Array to int16, ignore the sign bit(!).
-func ByteArr2int16(byteArr []byte) int16 {
+func ByteArr2int16(byteArr []byte, direction bool) int16 {
 	var r int16
 	for i, v := range byteArr {
-		r += int16(v) << uint(i*8)
+		if direction == true {
+			r += int16(v) << uint(i*8)
+		} else {
+			r = r << 8
+			r += int16(v)
+		}
 	}
 	return r
 }
 
 // ByteArr2int32u transform byte Array to !!uint32, ignore the sign bit(!).
-func ByteArr2int32u(byteArr []byte) uint32 {
+func ByteArr2int32u(byteArr []byte, direction bool) uint32 {
 	var r uint32
 	for i, v := range byteArr {
-		r += uint32(v) << uint(i*8)
+		if direction == true {
+			r += uint32(v) << uint(i*8)
+		} else {
+			r = r << 8
+			r += uint32(v)
+		}
 	}
 	return r
 }
 
 // ByteArr2int16u transform byte Array to !!uint16, ignore the sign bit(!).
-func ByteArr2int16u(byteArr []byte) uint16 {
+func ByteArr2int16u(byteArr []byte, direction bool) uint16 {
 	var r uint16
 	for i, v := range byteArr {
-		r += uint16(v) << uint(i*8)
+		if direction == true {
+			r += uint16(v) << uint(i*8)
+		} else {
+			r = r << 8
+			r += uint16(v)
+		}
 	}
 	return r
 }
