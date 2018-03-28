@@ -135,8 +135,8 @@ func MultiplyByEach(arr []int) (int, error) {
 	return r, err
 }
 
-// GetLenthOfLine ..
-func GetLenthOfLine(biWidth int32, biBitCount uint16) int {
+// GetLengthOfLine ..
+func GetLengthOfLine(biWidth int32, biBitCount uint16) int {
 	dataSizePerLine := (int(biWidth)*int(biBitCount) + 31) / 8
 	return (dataSizePerLine / 4) * 4 // Make sure the variable is a multiple of four.
 }

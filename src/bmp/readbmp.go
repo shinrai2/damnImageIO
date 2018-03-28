@@ -46,7 +46,7 @@ func Read(filePath *string) {
 			})
 		}
 	}
-	dataSizePerLine := util.GetLenthOfLine(bmpInfoHeader.BiWidth, bmpInfoHeader.BiBitCount)
+	dataSizePerLine := util.GetLengthOfLine(bmpInfoHeader.BiWidth, bmpInfoHeader.BiBitCount)
 	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
 	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
 		imageData = append(imageData, head.ImageLine{
