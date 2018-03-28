@@ -4,10 +4,10 @@ package head
 type PngFileSignature []byte
 
 type Chunk struct {
-	Length        uint32 // 4 byte
-	ChunkTypeCode string // 4 byte
+	Length        uint32 // 4 bytes
+	ChunkTypeCode string // 4 bytes
 	ChunkData     interface{}
-	CRC           []byte
+	CRC           uint32
 }
 
 type IHDR struct {
