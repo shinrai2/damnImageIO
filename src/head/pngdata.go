@@ -5,9 +5,9 @@ type PngFileSignature []byte
 
 type Chunk struct {
 	Length        uint32 // 4 byte
-	ChunkTypeCode uint32 // 4 byte
+	ChunkTypeCode string // 4 byte
 	ChunkData     interface{}
-	CRC           [4]byte
+	CRC           []byte
 }
 
 type IHDR struct {
