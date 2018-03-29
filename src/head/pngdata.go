@@ -7,7 +7,7 @@ type Chunk struct {
 	Length        uint32 // 4 bytes
 	ChunkTypeCode string // 4 bytes
 	ChunkData     interface{}
-	CRC           uint32
+	CRC           []byte
 }
 
 type IHDR struct {

@@ -27,7 +27,7 @@ func Read(filePath *string) {
 		Filter:      util.ReadNextBytes(f, 1)[0],
 		Interlace:   util.ReadNextBytes(f, 1)[0],
 	}
-	iHDRCRC := util.ByteArr2int32u(util.ReadNextBytes(f, 4), false)
+	iHDRCRC := util.ReadNextBytes(f, 4)
 	iHDRChunk := head.Chunk{
 		Length:        iHDRLength,
 		ChunkTypeCode: iHDRChunkTypeCode,

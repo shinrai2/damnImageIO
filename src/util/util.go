@@ -76,28 +76,33 @@ func ReadNextBytes(f1 *os.File, size int) []byte {
 	return bx
 }
 
-// Int2ByteArr transform int to byte Array.
-func Int2ByteArr(intt interface{}) []byte {
+// Int2ByteArray transform int to byte Array.
+func Int2ByteArray(intt interface{}, direction bool) []byte {
+	var ix int
+	var vx uint
 	var r []byte
-	if v1, ok1 := intt.(int32); ok1 {
-		r = make([]byte, 0, 4)
-		for i := 0; i < 4; i++ {
-			r = append(r, byte(uint(v1)>>uint(i*8)))
-		}
-	} else if v2, ok2 := intt.(int16); ok2 {
-		r = make([]byte, 0, 2)
-		for i := 0; i < 2; i++ {
-			r = append(r, byte(uint(v2)>>uint(i*8)))
-		}
-	} else if v3, ok3 := intt.(uint32); ok3 {
-		r = make([]byte, 0, 4)
-		for i := 0; i < 4; i++ {
-			r = append(r, byte(v3>>uint(i*8)))
-		}
-	} else if v4, ok4 := intt.(uint16); ok4 {
-		r = make([]byte, 0, 2)
-		for i := 0; i < 2; i++ {
-			r = append(r, byte(v4>>uint(i*8)))
+	switch intt.(type) {
+	default:
+		Check(errors.New("unexpected type"))
+	case int16:
+		ix = 2
+		vx = uint(intt.(int16))
+	case uint16:
+		ix = 2
+		vx = uint(intt.(uint16))
+	case int32:
+		ix = 4
+		vx = uint(intt.(int32))
+	case uint32:
+		ix = 4
+		vx = uint(intt.(uint32))
+	}
+	r = make([]byte, 0, ix)
+	for i := 0; i < ix; i++ {
+		if direction == true {
+			r = append(r, byte(vx>>uint(i*8))) // bmp
+		} else {
+			r = append(r, byte(vx>>uint((ix-1-i)*8))) // png
 		}
 	}
 	return r
