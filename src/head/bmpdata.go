@@ -3,8 +3,10 @@ package head
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	util "../util"
+	"gonum.org/v1/gonum/mat"
 )
 
 // BitmapFileHeader record the file information.
@@ -45,47 +47,109 @@ func (rgbQuads RgbQuads) Format() string {
 		", ", rgbQuads.RgbRed, ", ", rgbQuads.RgbReserved, ")")
 }
 
-// ImageLine one Line of Pixel, may have some padding at the end.
-type ImageLine struct {
-	ImageByteArr []byte
-}
+// // ImageLine one Line of Pixel, may have some padding at the end.
+// type ImageLine struct {
+// 	ImageByteArr []byte
+// }
 
-// Format the ImageLine to a one dimension byte matrix.
-func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
-	var layer []byte
+// // Format the ImageLine to a one dimension byte matrix.
+// func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
+// 	var layer []byte
+// 	var count int
+// 	if biBitCount == 32 { // Alpha
+// 		layer = make([]uint8, biWidth*4)
+// 	} else if biBitCount > 8 { // Non-grayscale
+// 		layer = make([]uint8, biWidth*3)
+// 	} else { // Grayscale
+// 		layer = make([]uint8, biWidth)
+// 	}
+// 	for _, v := range imageLine.ImageByteArr {
+// 		switch biBitCount {
+// 		// use RGBQUAD
+// 		case 1:
+// 			for i := 7; i >= 0; i-- {
+// 				if count < biWidth {
+// 					layer[count] = uint8((v & (byte(1) << uint(i))) >> uint(i))
+// 					// layer = append(layer, )
+// 					count++
+// 				}
+// 			}
+// 		case 4:
+// 			for i := 1; i >= 0; i-- {
+// 				if count < biWidth {
+// 					layer[count] = uint8((v & (byte(15) << uint(i*4))) >> uint(i*4))
+// 					// layer = append(layer, )
+// 					count++
+// 				}
+// 			}
+// 		case 8:
+// 			if count < biWidth {
+// 				layer[count] = uint8(v)
+// 				// layer = append(layer, )
+// 				count++
+// 			}
+// 		// not use RGBQUAD
+// 		case 16:
+// 			if count < biWidth {
+// 		case 24:
+// 		case 32:
+// 		default:
+// 			util.Check(errors.New("Unsupported biBitCount type"))
+// 		}
+// 	}
+// 	return layer
+// }
+func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.Dense {
 	var count int
-	if biBitCount > 8 { // Non-grayscale
-		layer = make([]uint8, 0, biWidth*3)
-	} else { // Grayscale
-		layer = make([]uint8, 0, biWidth)
+	lineLength := util.GetLengthOfLine(width, biBitCount)
+	dimz := int((biBitCount-1)/8 + 1)
+	r := make([][]float64, dimz)
+	rd := make([]*mat.Dense, dimz)
+	for iz := 0; iz < dimz; iz++ {
+		r[iz] = make([]float64, width*height)
 	}
-	for _, v := range imageLine.ImageByteArr {
-		switch biBitCount {
-		case 1:
-			for i := 7; i >= 0; i-- {
-				if count < biWidth {
-					layer = append(layer, uint8((v&(byte(1)<<uint(i)))>>uint(i)))
+	test := make([]int8, width*height)
+	for ih := 0; ih < int(height); ih++ {
+		vl := util.ReadNextBytes(f1, lineLength)
+		for i, v := range vl {
+			switch int(biBitCount) {
+			// use RGBQUAD
+			case 1:
+				for i := 7; i >= 0; i-- {
+					if count < int(width)*i {
+						// y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+						r[0][count] = float64((v & (byte(1) << uint(i))) >> uint(i))
+						test[count] = int8((v & (byte(1) << uint(i))) >> uint(i))
+						count++
+					}
+				}
+			case 4:
+				for i := 1; i >= 0; i-- {
+					if count < int(width)*i {
+						y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+						r[0][y] = float64((v & (byte(15) << uint(i*4))) >> uint(i*4))
+						count++
+					}
+				}
+			case 8:
+				if count < int(width)*i {
+					y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+					r[0][y] = float64(v)
 					count++
 				}
+			// not use RGBQUAD
+			case 16:
+			case 24:
+			case 32:
+			default:
+				util.Check(errors.New("Unsupported biBitCount type"))
 			}
-		case 4:
-			for i := 1; i >= 0; i-- {
-				if count < biWidth {
-					layer = append(layer, uint8((v&(byte(15)<<uint(i*4)))>>uint(i*4)))
-					count++
-				}
-			}
-		case 8:
-			if count < biWidth {
-				layer = append(layer, uint8(v))
-				count++
-			}
-		// case 16:
-		// case 24:
-		// case 32:
-		default:
-			util.Check(errors.New("Unsupported biBitCount type"))
 		}
+
 	}
-	return layer
+	fmt.Println(test)
+	for id, vd := range r {
+		rd[id] = mat.NewDense(int(width), int(height), vd)
+	}
+	return rd
 }

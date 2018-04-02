@@ -5,7 +5,6 @@ import (
 	"os"
 
 	head "../head"
-	matrix "../matrix"
 	util "../util"
 )
 
@@ -46,26 +45,27 @@ func Read(filePath *string) {
 			})
 		}
 	}
-	dataSizePerLine := util.GetLengthOfLine(bmpInfoHeader.BiWidth, bmpInfoHeader.BiBitCount)
-	imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
-	for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
-		imageData = append(imageData, head.ImageLine{
-			ImageByteArr: util.ReadNextBytes(f, dataSizePerLine),
-		})
-	}
-	mdata := make([]uint8, 0, int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiHeight))
-	for i := int(bmpInfoHeader.BiHeight) - 1; i >= 0; i-- {
-		mdata = append(mdata, imageData[i].Format(int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))...)
-	}
-	imageData = nil // drop.
-	mdimen := []int{int(bmpInfoHeader.BiWidth), int(bmpInfoHeader.BiHeight)}
-	imgMatrix := matrix.Create(mdimen, mdata)
+	// dataSizePerLine := util.GetLengthOfLine(bmpInfoHeader.BiWidth, bmpInfoHeader.BiBitCount)
+	// imageData := make([]head.ImageLine, 0, bmpInfoHeader.BiHeight)
+	// for i := 0; i < int(bmpInfoHeader.BiHeight); i++ { // Loop for read all pixel data.
+	// 	imageData = append(imageData, head.ImageLine{
+	// 		ImageByteArr: util.ReadNextBytes(f, dataSizePerLine),
+	// 	})
+	// }
+	// mdata := make([]uint8, 0, int(bmpInfoHeader.BiWidth)*int(bmpInfoHeader.BiHeight))
+	// for i := int(bmpInfoHeader.BiHeight) - 1; i >= 0; i-- {
+	// 	mdata = append(mdata, imageData[i].Format(int(bmpInfoHeader.BiBitCount), int(bmpInfoHeader.BiWidth))...)
+	// }
+	// imageData = nil // drop.
+	// mdimen := []int{int(bmpInfoHeader.BiWidth), int(bmpInfoHeader.BiHeight)}
+	// imgMatrix := matrix.Create(mdimen, mdata)
+	pixelDense := head.ReadPixelData(f, bmpInfoHeader.BiWidth, bmpInfoHeader.BiHeight, bmpInfoHeader.BiBitCount)
 	/* In the end we get the structure what we want */
 	bmpData := head.BmpData{
 		BitmapFileHeader: bitmapFileHeader,
 		BmpInfoHeader:    bmpInfoHeader,
 		RgbQuads:         rgbQuads,
-		ImgMatrix:        imgMatrix,
+		ImgDense:         pixelDense,
 	}
 	/* Show time. */
 	/* BITMAPFILEHEADER */
@@ -94,6 +94,8 @@ func Read(filePath *string) {
 	}
 	fmt.Println("")
 	/* IMAGEDATA */
-	bmpData.ImgMatrix.Printx()
+	// bmpData.ImgMatrix.Printx()
+	x := bmpData.ImgDense[0]
+	fmt.Println(*x)
 	f.Close()
 }

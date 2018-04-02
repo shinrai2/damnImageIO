@@ -1,7 +1,7 @@
 package head
 
 import (
-	matrix "../matrix"
+	"gonum.org/v1/gonum/mat"
 )
 
 // BmpData records all bmp data include the head data and the pixel data.
@@ -9,7 +9,7 @@ type BmpData struct {
 	BitmapFileHeader BitmapFileHeader
 	BmpInfoHeader    BmpInfoHeader
 	RgbQuads         []RgbQuads
-	ImgMatrix        matrix.Matrix
+	ImgDense         []*mat.Dense
 }
 
 // PngData ..
