@@ -94,8 +94,8 @@ func Read(filePath *string) {
 	}
 	fmt.Println("")
 	/* IMAGEDATA */
-	// bmpData.ImgMatrix.Printx()
-	x := bmpData.ImgDense[0]
-	fmt.Println(*x)
+	for _, vid := range bmpData.ImgDense {
+		fmt.Println(*vid)
+	}
 	f.Close()
 }

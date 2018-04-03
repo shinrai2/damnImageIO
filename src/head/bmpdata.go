@@ -101,42 +101,43 @@ func (rgbQuads RgbQuads) Format() string {
 // }
 func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.Dense {
 	var count int
-	lineLength := util.GetLengthOfLine(width, biBitCount)
-	dimz := int((biBitCount-1)/8 + 1)
+	lineLength := util.GetLengthOfLine(width, biBitCount) // the actually length of line byte in bmp file.
+	dimz := int((biBitCount-1)/8 + 1)                     // calculate the dimension z
 	r := make([][]float64, dimz)
 	rd := make([]*mat.Dense, dimz)
 	for iz := 0; iz < dimz; iz++ {
-		r[iz] = make([]float64, width*height)
+		r[iz] = make([]float64, int(width*height))
 	}
-	test := make([]int8, width*height)
-	for ih := 0; ih < int(height); ih++ {
-		vl := util.ReadNextBytes(f1, lineLength)
-		for i, v := range vl {
+	for ih := 0; ih < int(height); ih++ { // loop
+		vl := util.ReadNextBytes(f1, lineLength) // read a line data.
+		for _, v := range vl {                   // loop for each byte of line
 			switch int(biBitCount) {
 			// use RGBQUAD
 			case 1:
 				for i := 7; i >= 0; i-- {
-					if count < int(width)*i {
-						// y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
-						r[0][count] = float64((v & (byte(1) << uint(i))) >> uint(i))
-						test[count] = int8((v & (byte(1) << uint(i))) >> uint(i))
-						count++
+					if count >= int(width)*(ih+1) { // Key code, skip the remaining blank parts of line.
+						break
 					}
+					y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+					r[0][y] = float64((v & (byte(1) << uint(i))) >> uint(i))
+					count++
 				}
 			case 4:
 				for i := 1; i >= 0; i-- {
-					if count < int(width)*i {
-						y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
-						r[0][y] = float64((v & (byte(15) << uint(i*4))) >> uint(i*4))
-						count++
+					if count >= int(width)*(ih+1) {
+						break
 					}
-				}
-			case 8:
-				if count < int(width)*i {
 					y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
-					r[0][y] = float64(v)
+					r[0][y] = float64((v & (byte(15) << uint(i*4))) >> uint(i*4))
 					count++
 				}
+			case 8:
+				if count >= int(width)*(ih+1) {
+					break
+				}
+				y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+				r[0][y] = float64(v)
+				count++
 			// not use RGBQUAD
 			case 16:
 			case 24:
@@ -145,11 +146,9 @@ func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.D
 				util.Check(errors.New("Unsupported biBitCount type"))
 			}
 		}
-
 	}
-	fmt.Println(test)
 	for id, vd := range r {
-		rd[id] = mat.NewDense(int(width), int(height), vd)
+		rd[id] = mat.NewDense(int(height), int(width), vd)
 	}
 	return rd
 }
