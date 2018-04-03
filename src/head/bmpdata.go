@@ -47,64 +47,13 @@ func (rgbQuads RgbQuads) Format() string {
 		", ", rgbQuads.RgbRed, ", ", rgbQuads.RgbReserved, ")")
 }
 
-// // ImageLine one Line of Pixel, may have some padding at the end.
-// type ImageLine struct {
-// 	ImageByteArr []byte
-// }
-
-// // Format the ImageLine to a one dimension byte matrix.
-// func (imageLine ImageLine) Format(biBitCount int, biWidth int) []byte {
-// 	var layer []byte
-// 	var count int
-// 	if biBitCount == 32 { // Alpha
-// 		layer = make([]uint8, biWidth*4)
-// 	} else if biBitCount > 8 { // Non-grayscale
-// 		layer = make([]uint8, biWidth*3)
-// 	} else { // Grayscale
-// 		layer = make([]uint8, biWidth)
-// 	}
-// 	for _, v := range imageLine.ImageByteArr {
-// 		switch biBitCount {
-// 		// use RGBQUAD
-// 		case 1:
-// 			for i := 7; i >= 0; i-- {
-// 				if count < biWidth {
-// 					layer[count] = uint8((v & (byte(1) << uint(i))) >> uint(i))
-// 					// layer = append(layer, )
-// 					count++
-// 				}
-// 			}
-// 		case 4:
-// 			for i := 1; i >= 0; i-- {
-// 				if count < biWidth {
-// 					layer[count] = uint8((v & (byte(15) << uint(i*4))) >> uint(i*4))
-// 					// layer = append(layer, )
-// 					count++
-// 				}
-// 			}
-// 		case 8:
-// 			if count < biWidth {
-// 				layer[count] = uint8(v)
-// 				// layer = append(layer, )
-// 				count++
-// 			}
-// 		// not use RGBQUAD
-// 		case 16:
-// 			if count < biWidth {
-// 		case 24:
-// 		case 32:
-// 		default:
-// 			util.Check(errors.New("Unsupported biBitCount type"))
-// 		}
-// 	}
-// 	return layer
-// }
+// ReadPixelData read all pixel data and transform to a dense array(3-dimen).
 func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.Dense {
 	var count int
 	lineLength := util.GetLengthOfLine(width, biBitCount) // the actually length of line byte in bmp file.
 	dimz := int((biBitCount-1)/8 + 1)                     // calculate the dimension z
-	r := make([][]float64, dimz)
-	rd := make([]*mat.Dense, dimz)
+	r := make([][]float64, dimz)                          // the data before packing
+	rd := make([]*mat.Dense, dimz)                        // the actual return value
 	for iz := 0; iz < dimz; iz++ {
 		r[iz] = make([]float64, int(width*height))
 	}
@@ -113,16 +62,16 @@ func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.D
 		for _, v := range vl {                   // loop for each byte of line
 			switch int(biBitCount) {
 			// use RGBQUAD
-			case 1:
+			case 1: // one pixel one bit
 				for i := 7; i >= 0; i-- {
 					if count >= int(width)*(ih+1) { // Key code, skip the remaining blank parts of line.
 						break
 					}
-					y := (int(height)-(count/int(width))-1)*int(width) + count%int(width)
+					y := (int(height)-(count/int(width))-1)*int(width) + count%int(width) // Calculate the actual dimension two
 					r[0][y] = float64((v & (byte(1) << uint(i))) >> uint(i))
 					count++
 				}
-			case 4:
+			case 4: // one pixel four bits
 				for i := 1; i >= 0; i-- {
 					if count >= int(width)*(ih+1) {
 						break
@@ -131,7 +80,7 @@ func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.D
 					r[0][y] = float64((v & (byte(15) << uint(i*4))) >> uint(i*4))
 					count++
 				}
-			case 8:
+			case 8: // one pixel eight bits
 				if count >= int(width)*(ih+1) {
 					break
 				}
@@ -139,14 +88,28 @@ func ReadPixelData(f1 *os.File, width, height int32, biBitCount uint16) []*mat.D
 				r[0][y] = float64(v)
 				count++
 			// not use RGBQUAD
-			case 16:
-			case 24:
-			case 32:
+			case 16: // three pixels sixteen bits
+				util.Check(errors.New("Unsupported 16-bits type now"))
+			case 24: // three pixels twenty-four bits
+				if count >= int(width)*(ih+1)*3 {
+					break
+				}
+				y := (int(height)-(count/3/int(width))-1)*int(width) + count/3%int(width)
+				r[count%3][y] = float64(v)
+				count++
+			case 32: // four pixels thirty-two bits
+				if count >= int(width)*(ih+1)*4 {
+					break
+				}
+				y := (int(height)-(count/4/int(width))-1)*int(width) + count/4%int(width)
+				r[count%4][y] = float64(v)
+				count++
 			default:
 				util.Check(errors.New("Unsupported biBitCount type"))
 			}
 		}
 	}
+	// Packing
 	for id, vd := range r {
 		rd[id] = mat.NewDense(int(height), int(width), vd)
 	}
